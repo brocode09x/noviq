@@ -6,61 +6,17 @@ import { Footer } from "../components/Footer";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { useWallet } from "@/context/WalletContext";
 import { useToast } from "@/context/ToastContext";
+import type { ServiceItem, RunResponse } from "@/app/lib/types";
+import { EXAMPLE_INPUTS } from "@/app/lib/constants";
+import { truncateAddress } from "@/app/lib/utils";
 import "./playground.css";
-
-interface ServiceItem {
-  id: string;
-  name: string;
-  description: string;
-  price_usdc: number;
-}
-
-const DEFAULT_SERVICES: ServiceItem[] = [
-  {
-    id: "token_price",
-    name: "Token Price Fetcher",
-    description: "Fetches real-time price of any cryptocurrency token via CoinGecko.",
-    price_usdc: 0.005,
-  },
-  {
-    id: "nemotron-3-super",
-    name: "Nemotron 3 Super",
-    description: "NVIDIA Nemotron LLM for high-speed multi-turn reasoning and chat.",
-    price_usdc: 0.015,
-  },
-  {
-    id: "twitter_fetch",
-    name: "Twitter Profile Fetcher",
-    description: "Fetches user profile, follower counts and recent activity metrics from X/Twitter.",
-    price_usdc: 0.008,
-  },
-];
-
-const EXAMPLE_INPUTS: Record<string, string> = {
-  token_price: "bitcoin",
-  twitter_fetch: "elonmusk",
-  "nemotron-3-super": "What is the capital of France?",
-};
-
-function truncateAddress(addr: string | null | undefined, maxLen = 14): string {
-  if (!addr || addr.length <= maxLen) return addr || "";
-  return addr.slice(0, 6) + "···" + addr.slice(-4);
-}
-
-interface RunResponse {
-  tx_hash?: string;
-  cost_usdc?: number;
-  result?: unknown;
-  error?: string;
-  [key: string]: unknown;
-}
 
 export default function PlaygroundPage() {
   const { apiKey, setApiKey, refreshWallet } = useWallet();
   const { showToast } = useToast();
 
-  const [services, setServices] = useState<ServiceItem[]>(DEFAULT_SERVICES);
-  const [selectedServiceId, setSelectedServiceId] = useState<string>("token_price");
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [selectedServiceId, setSelectedServiceId] = useState<string>("");
   const [inputData, setInputData] = useState<string>("bitcoin");
   const [localApiKey, setLocalApiKey] = useState<string>("");
   const [showKey, setShowKey] = useState<boolean>(false);
@@ -495,12 +451,12 @@ export default function PlaygroundPage() {
                       <div className="tx-value-wrapper">
                         <a
                           id="tx-explorer-link"
-                          href={`https://testnet.arcscan.app/tx/${responseData.tx_hash}`}
+                          href={`https://explorer.arc.io/tx/${responseData.tx_hash?.startsWith('0x') ? responseData.tx_hash : '0x' + responseData.tx_hash}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="tx-link"
                         >
-                          {truncateAddress(responseData.tx_hash, 12)}
+                          {truncateAddress(responseData.tx_hash?.startsWith('0x') ? responseData.tx_hash : '0x' + responseData.tx_hash)}
                         </a>
                         <button
                           id="btn-copy-tx"

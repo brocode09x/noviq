@@ -6,15 +6,8 @@ import { Footer } from "../components/Footer";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { useWallet } from "@/context/WalletContext";
 import { useToast } from "@/context/ToastContext";
+import type { ApiKeyItem } from "@/app/lib/types";
 import "./api-keys.css";
-
-interface ApiKeyItem {
-  id?: string;
-  key_prefix: string;
-  label: string;
-  is_revoked: boolean;
-  created_at: string;
-}
 
 export default function ApiKeysPage() {
   const { wallet, userId, isConnecting, connectWallet, setApiKey } = useWallet();

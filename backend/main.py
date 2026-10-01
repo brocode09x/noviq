@@ -1,7 +1,6 @@
 from __future__ import annotations
 import logging
 import sys
-import uuid
 from pathlib import Path
 import uvicorn
 import os
@@ -30,8 +29,8 @@ from backend.auth import (
     verify_wallet_signature,
 )
 from backend.config import (
-    CIRCLE_API_KEY,
-    CIRCLE_ENTITY_SECRET,
+    BACKEND_PRIVATE_KEY,
+    MARKETPLACE_CONTRACT_ADDRESS,
     SELLER_WALLET_ADDRESS,
 )
 from backend.models import (
@@ -65,7 +64,7 @@ app = FastAPI(
         "Pay-per-request AI services powered by Circle Nanopayments on Arc. "
         "No subscriptions. No gas. Just sign and run."
     ),
-    version="0.3.0",
+    version="0.4.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -123,7 +122,7 @@ if not any(getattr(route, "path", None) == "/" for route in app.routes):
         return {
             "status": "ok",
             "service": "Noviq API",
-            "version": "0.3.0",
+            "version": "0.4.0",
             "docs": "/docs",
             "health": "/health",
         }
@@ -151,8 +150,8 @@ async def unified_http_error(_request: Request, exc: HTTPException):
 async def health() -> HealthResponse:
     return HealthResponse(
         status="ok",
-        circle_api_key_set=bool(CIRCLE_API_KEY),
-        entity_secret_set=bool(CIRCLE_ENTITY_SECRET),
+        backend_key_set=bool(BACKEND_PRIVATE_KEY),
+        marketplace_contract_set=bool(MARKETPLACE_CONTRACT_ADDRESS),
         seller_wallet_configured=bool(SELLER_WALLET_ADDRESS),
     )
 
@@ -181,101 +180,16 @@ async def get_auth_nonce(wallet_address: str) -> NonceResponse:
     return NonceResponse(nonce=nonce, message=message, expires_in=300)
 
 
-# ── Service execution routes (API key required) ─────────────────────
+# ── Internal service execution helper ───────────────────────────────
 
-@app.post("/run-service", tags=["Services"], response_model=None)
-async def run_service(
+async def _execute_service(
     body: RunServiceRequest,
-    wallet_address: str = Depends(validate_api_key),
-    x_payment_authorization: str | None = Header(default=None),
-):
-    # Ensure consistent EIP-55 checksummed address across all flows
-    wallet_address = to_checksum_address(wallet_address)
-
-    if body.service_id not in service_module.SERVICE_REGISTRY:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Unknown service_id '{body.service_id}'. "
-                   f"Valid options: {list(service_module.SERVICE_REGISTRY)}",
-        )
-
-    service_def = service_module.SERVICE_REGISTRY[body.service_id]
-
-    # Step 1: Handle x402 payment authorization challenge/verification
-    payment_result = await handle_payment_flow(
-        x_payment_authorization=x_payment_authorization,
-        item_id=body.service_id,
-        price_usdc=service_def.price_usdc,
-        description=f"Run {service_def.name} on Noviq",
-        user_id=wallet_address,
-    )
-
-    if isinstance(payment_result, JSONResponse):
-        return payment_result
-
-    # Step 2: Balance pre-check (verify user can pay before doing work)
-    try:
-        await payment.check_balance(wallet_address, service_def.price_usdc)
-    except ValueError as exc:
-        raise HTTPException(status_code=402, detail=str(exc))
-
-    # Step 3: Create pending request for audit trail
-    request_id = str(uuid.uuid4())
-    database.create_pending_request(
-        request_id=request_id,
-        user_id=wallet_address,
-        service_id=body.service_id,
-        cost=service_def.price_usdc,
-    )
-
-    # Step 4: Run the service BEFORE charging
-    try:
-        result = await service_module.run_service(body.service_id, body.input_data)
-    except (ValueError, ServiceExecutionError) as exc:
-        database.fail_pending_request(request_id, str(exc))
-        raise HTTPException(status_code=400, detail=str(exc))
-    except httpx.HTTPStatusError as exc:
-        database.fail_pending_request(request_id, f"Service upstream error: {exc}")
-        logger.error("Service error: %s", exc)
-        raise HTTPException(status_code=502, detail="Service returned an error.")
-    except Exception as exc:
-        database.fail_pending_request(request_id, f"Unexpected error: {exc}")
-        logger.error("Unexpected service error: %s", exc)
-        raise HTTPException(status_code=500, detail="Internal service error.")
-
-    # Step 5: Service succeeded — now charge the user
-    try:
-        tx_hash = await payment.execute_payment(wallet_address, service_def.price_usdc)
-    except ValueError as exc:
-        database.fail_pending_request(request_id, f"Payment failed after service success: {exc}")
-        logger.error("Payment failed after service success: %s", exc)
-        raise HTTPException(status_code=402, detail=str(exc))
-
-    # Step 6: Record success
-    database.complete_pending_request(request_id, tx_hash)
-    database.save_transaction(
-        user_id=wallet_address,
-        service_id=body.service_id,
-        service_name=service_def.name,
-        cost=service_def.price_usdc,
-        status="verified",
-        tx_hash=tx_hash,
-    )
-
-    return {
-        "service_id": body.service_id,
-        "result": result,
-        "tx_hash": tx_hash,
-        "authorization_status": "verified"
-    }
-
-
-@app.post("/run", tags=["Services"], response_model=None)
-async def run_simple(
-    body: RunServiceRequest,
-    wallet_address: str = Depends(validate_api_key),
-):
-    # Ensure consistent EIP-55 checksummed address across all flows
+    wallet_address: str,
+) -> dict:
+    """
+    Shared logic for running a service, charging the user, and recording
+    the transaction.  Called by both /run and /run-service.
+    """
     wallet_address = to_checksum_address(wallet_address)
 
     if body.service_id not in service_module.SERVICE_REGISTRY:
@@ -293,36 +207,26 @@ async def run_simple(
     except ValueError as exc:
         raise HTTPException(status_code=402, detail=str(exc))
 
-    # Step 2: Create pending request for audit trail
-    request_id = str(uuid.uuid4())
-    database.create_pending_request(
-        request_id=request_id,
-        user_id=wallet_address,
-        service_id=body.service_id,
-        cost=service_def.price_usdc,
-    )
-
-    # Step 3: Run the service BEFORE charging
+    # Step 2: Run the service BEFORE charging
     try:
         result = await service_module.run_service(body.service_id, body.input_data)
     except (ValueError, ServiceExecutionError) as exc:
-        database.fail_pending_request(request_id, str(exc))
         raise HTTPException(status_code=400, detail=str(exc))
+    except httpx.HTTPStatusError as exc:
+        logger.error("Service error: %s", exc)
+        raise HTTPException(status_code=502, detail="Service returned an error.")
     except Exception as exc:
-        database.fail_pending_request(request_id, f"Unexpected error: {exc}")
         logger.error("Unexpected service error: %s", exc)
         raise HTTPException(status_code=500, detail="Internal service error.")
 
-    # Step 4: Service succeeded — now charge the user
+    # Step 3: Service succeeded — now charge the user
     try:
         tx_hash = await payment.execute_payment(wallet_address, service_def.price_usdc)
     except ValueError as exc:
-        database.fail_pending_request(request_id, f"Payment failed after service success: {exc}")
         logger.error("Payment failed after service success: %s", exc)
         raise HTTPException(status_code=402, detail=str(exc))
 
-    # Step 5: Record success
-    database.complete_pending_request(request_id, tx_hash)
+    # Step 4: Record success
     database.save_transaction(
         user_id=wallet_address,
         service_id=body.service_id,
@@ -338,6 +242,49 @@ async def run_simple(
         "price_usdc": service_def.price_usdc,
         "tx_hash": tx_hash,
     }
+
+
+# ── Service execution routes (API key required) ─────────────────────
+
+@app.post("/run", tags=["Services"], response_model=None)
+async def run_simple(
+    body: RunServiceRequest,
+    wallet_address: str = Depends(validate_api_key),
+):
+    return await _execute_service(body, wallet_address)
+
+
+@app.post("/run-service", tags=["Services"], response_model=None)
+async def run_service(
+    body: RunServiceRequest,
+    wallet_address: str = Depends(validate_api_key),
+    x_payment_authorization: str | None = Header(default=None),
+):
+    wallet_address = to_checksum_address(wallet_address)
+
+    if body.service_id not in service_module.SERVICE_REGISTRY:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown service_id '{body.service_id}'. "
+                   f"Valid options: {list(service_module.SERVICE_REGISTRY)}",
+        )
+
+    service_def = service_module.SERVICE_REGISTRY[body.service_id]
+
+    # Handle x402 payment authorization challenge/verification
+    payment_result = await handle_payment_flow(
+        x_payment_authorization=x_payment_authorization,
+        item_id=body.service_id,
+        price_usdc=service_def.price_usdc,
+        description=f"Run {service_def.name} on Noviq",
+        user_id=wallet_address,
+    )
+
+    if isinstance(payment_result, JSONResponse):
+        return payment_result
+
+    # If x402 verification passed, proceed with shared execution logic
+    return await _execute_service(body, wallet_address)
 
 
 @app.get("/transactions/{user_id}", tags=["Services"])

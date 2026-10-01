@@ -8,6 +8,7 @@ export interface WalletData {
   address: string;
   wallet_id: string;
   usdc_balance: number;
+  allowance: number;
 }
 
 interface WalletContextType {
@@ -22,6 +23,7 @@ interface WalletContextType {
   openWalletPanel: () => void;
   closeWalletPanel: () => void;
   setApiKey: (key: string | null) => void;
+  approveUSDC: (amount: number) => Promise<boolean>;
 }
 
 declare global {
@@ -137,6 +139,41 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [showToast]);
 
+  const approveUSDC = useCallback(async (amount: number) => {
+    if (typeof window === "undefined" || typeof window.ethereum === "undefined") {
+      showToast("MetaMask is required.", "error");
+      return false;
+    }
+    
+    try {
+      const { BrowserProvider, Contract, parseUnits } = await import("ethers");
+      const provider = new BrowserProvider(window.ethereum as any);
+      const signer = await provider.getSigner();
+      
+      const usdcAddress = "0x3600000000000000000000000000000000000000"; // USDC on Arc
+      const marketplaceAddress = process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS || "0x0000000000000000000000000000000000000000";
+      
+      const abi = [
+        "function approve(address spender, uint256 amount) external returns (bool)"
+      ];
+      
+      const usdc = new Contract(usdcAddress, abi, signer);
+      const amountWei = parseUnits(amount.toString(), 6); // 6 decimals for USDC
+      
+      showToast("Please approve the transaction in your wallet...", "info");
+      const tx = await usdc.approve(marketplaceAddress, amountWei);
+      showToast("Transaction submitted, waiting for confirmation...", "info");
+      await tx.wait();
+      showToast("USDC approved successfully!", "success");
+      void refreshWallet();
+      return true;
+    } catch (err: any) {
+      console.error("Approval failed:", err);
+      showToast(err.message || "Failed to approve USDC", "error");
+      return false;
+    }
+  }, [showToast]);
+
   // Restore wallet session on initial mount
   useEffect(() => {
     const restoreSession = () => {
@@ -206,6 +243,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
         openWalletPanel,
         closeWalletPanel,
         setApiKey,
+        approveUSDC,
       }}
     >
       {children}

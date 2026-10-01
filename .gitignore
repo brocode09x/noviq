@@ -1,5 +1,27 @@
+# Build / cache
 .next
 node_modules
+__pycache__
+*.pyc
+
+# Environment
 .env
 next-env.d.ts
-__pycache__
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Contract artifacts (auto-generated)
+contract/artifacts
+contract/cache
+
+# Python virtual env
+venv/
+.venv/

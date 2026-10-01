@@ -11,19 +11,18 @@ load_dotenv(_REPO_ROOT / ".env")
 # Database
 POSTGRES_URL: str = os.getenv("DATABASE_URL", "")
 
-# Circle API
-CIRCLE_API_KEY: str = os.getenv("CIRCLE_API_KEY", "")
-CIRCLE_ENTITY_SECRET: str = os.getenv("CIRCLE_ENTITY_SECRET", "")
-CIRCLE_API_BASE: str = "https://api.circle.com/v1/w3s"
+# Web3 Wallet Configuration
+BACKEND_PRIVATE_KEY: str = os.getenv("BACKEND_PRIVATE_KEY", "")
+MARKETPLACE_CONTRACT_ADDRESS: str = os.getenv("NEXT_PUBLIC_MARKETPLACE_CONTRACT_ADDRESS", "")
 
 # Arc / Chain
-ARC_TESTNET_RPC_URL: str = os.getenv("ARC_TESTNET_RPC_URL", "https://arc-testnet.drpc.org")
+ARC_MAINNET_RPC_URL: str = os.getenv("ARC_MAINNET_RPC_URL", "https://rpc.drpc.mainnet.arc.io")
 USDC_ADDRESS: str = os.getenv("USDC_ADDRESS", "0x3600000000000000000000000000000000000000")
-GATEWAY_API_BASE: str = "https://gateway-api-testnet.circle.com/v1"
+GATEWAY_API_BASE: str = "https://gateway-api.circle.com/v1"
 GATEWAY_WALLET_ADDRESS: str = "0x0077777d7EBA4688BDeF3E311b846F25870A19B9"
 
-# Chain ID for Arc testnet — needed for EIP-3009 domain separator
-ARC_CHAIN_ID: int = int(os.getenv("ARC_CHAIN_ID", "201980"))
+# Chain ID for Arc mainnet — needed for EIP-3009 domain separator
+ARC_CHAIN_ID: int = int(os.getenv("ARC_CHAIN_ID", "5042"))
 
 
 # Seller wallet (receives nanopayment authorizations)

@@ -7,35 +7,10 @@ import { Footer } from "./components/Footer";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { useWallet } from "@/context/WalletContext";
 import { useToast } from "@/context/ToastContext";
+import { ServiceItem, TransactionItem } from "@/app/lib/types";
+import { EXAMPLE_INPUTS } from "@/app/lib/constants";
+import { truncateRef, formatPrice } from "@/app/lib/utils";
 import "./page.css";
-
-interface ServiceItem {
-  id: string;
-  name: string;
-  description: string;
-  price_usdc: number;
-}
-
-interface TransactionItem {
-  service_id: string;
-  cost: number;
-  status: string;
-  txHash?: string;
-  paymentRef?: string;
-  time: string;
-}
-
-
-const EXAMPLE_INPUTS: Record<string, string> = {
-  token_price: "bitcoin",
-  twitter_fetch: "elonmusk",
-  "nemotron-3-super": "What is the capital of France?",
-};
-
-function truncateRef(ref: string | null | undefined): string {
-  if (!ref || ref.length < 16) return ref || "—";
-  return ref.slice(0, 8) + "···" + ref.slice(-8);
-}
 
 export default function LandingPage() {
   const { userId, apiKey } = useWallet();
@@ -596,10 +571,7 @@ console.log(data.result);`;
             </div>
           ) : (
             services.map((service, index) => {
-              const priceFormatted =
-                service.price_usdc < 0.01
-                  ? service.price_usdc.toFixed(3)
-                  : service.price_usdc.toFixed(2);
+              const priceFormatted = formatPrice(service.price_usdc);
               const isSelected = selectedService?.id === service.id;
 
               return (
@@ -728,7 +700,8 @@ console.log(data.result);`;
                       const isFailed = entry.status === "failed";
                       const statusLabel = isFailed ? "Failed" : "Done";
                       const statusIcon = isFailed ? "❌" : "✅";
-                      const txRef = entry.txHash || entry.paymentRef || "";
+                      const txRefRaw = entry.txHash || entry.paymentRef || "";
+                      const txRef = txRefRaw.startsWith("0x") || txRefRaw === "" ? txRefRaw : "0x" + txRefRaw;
 
                       let formattedTime = "";
                       try {
@@ -742,10 +715,7 @@ console.log(data.result);`;
                         formattedTime = String(entry.time || "");
                       }
 
-                      const costFormatted =
-                        entry.cost > 0 && entry.cost < 0.01
-                          ? entry.cost.toFixed(3)
-                          : Number(entry.cost || 0).toFixed(2);
+                      const costFormatted = formatPrice(entry.cost || 0);
 
                       const matchedService = services.find((s) => s.id === entry.service_id);
                       const displayService = matchedService ? matchedService.name : entry.service_id || "Unknown";
@@ -761,7 +731,7 @@ console.log(data.result);`;
                           <td className="history-cell-tx">
                             <div className="history-tx-wrapper">
                               <a
-                                href={`https://testnet.arcscan.app/tx/${txRef}`}
+                                href={`https://explorer.arc.io/tx/${txRef}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="ref-mono history-tx-link"

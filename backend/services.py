@@ -160,14 +160,14 @@ SERVICE_REGISTRY: dict[str, ServiceDefinition] = {
         id="twitter_fetch",
         name="🐦 Twitter Fetch",
         description="Fetches recent tweets for a given keyword or handle.",
-        price_usdc=0.05,
+        price_usdc=0.002,
         fn=fetch_twitter,
     ),
     "nemotron-3-super": ServiceDefinition(
         id="nemotron-3-super",
         name="🧠 nemotron-3",
         description="MoE model with leading domain accuracy for agentic tasks.",
-        price_usdc=0.10,
+        price_usdc=0.002,
         fn=ask_llm,
     ),
 }

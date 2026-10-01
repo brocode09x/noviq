@@ -5,14 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useWallet } from "@/context/WalletContext";
-
-function truncateAddress(addr: string | null | undefined): string {
-  if (!addr || addr.length < 10) return addr || "";
-  if (typeof window !== "undefined" && window.innerWidth <= 480) {
-    return addr.slice(0, 4) + "···" + addr.slice(-3);
-  }
-  return addr.slice(0, 6) + "···" + addr.slice(-4);
-}
+import { truncateAddress } from "@/app/lib/utils";
 
 export function Navbar({ activePage }: { activePage?: string }) {
   const { wallet, isConnecting, connectWallet, openWalletPanel } = useWallet();
@@ -30,9 +23,7 @@ export function Navbar({ activePage }: { activePage?: string }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const faucetUrl = wallet?.address
-    ? `https://faucet.circle.com/?address=${wallet.address}`
-    : "https://faucet.circle.com/";
+  const faucetUrl = "https://www.circle.com/en/usdc";
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -81,9 +72,9 @@ export function Navbar({ activePage }: { activePage?: string }) {
             rel="noopener noreferrer"
             className="btn btn-secondary btn-sm nav-faucet-btn"
             id="btn-faucet"
-            title="Get testnet USDC"
+            title="Get USDC"
           >
-            Faucet ↗
+            Get USDC ↗
           </a>
 
           <div className="navbar-wallet" id="navbar-wallet">

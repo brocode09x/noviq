@@ -27,7 +27,7 @@ class PaymentChallenge(BaseModel):
     price_usdc_atomic: int = Field(
         ..., description="Price expressed in USDC's smallest unit (6 decimals)"
     )
-    token_address: str = Field(..., description="USDC contract address on Arc testnet")
+    token_address: str = Field(..., description="USDC contract address on Arc mainnet")
     seller_address: str = Field(..., description="Marketplace wallet that receives the payment")
     chain_id: int
     agent_id: str
@@ -40,6 +40,7 @@ class WalletInfo(BaseModel):
     wallet_id: str
     address: str
     usdc_balance: float = 0.0
+    allowance: float = 0.0
     user_id: str
 
 
@@ -50,8 +51,8 @@ class CreateWalletRequest(BaseModel):
 # Health
 class HealthResponse(BaseModel):
     status: Literal["ok"] = "ok"
-    circle_api_key_set: bool
-    entity_secret_set: bool
+    backend_key_set: bool
+    marketplace_contract_set: bool
     seller_wallet_configured: bool
 
 

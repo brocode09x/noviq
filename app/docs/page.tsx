@@ -281,10 +281,10 @@ export default function DocsPage() {
                 </div>
                 <div className="docs-alert-content">
                   <p>
-                    <strong>Note:</strong> Noviq is currently running on Arc Testnet. You can obtain
-                    testnet USDC from the{" "}
-                    <a href="https://faucet.circle.com/" target="_blank" rel="noopener noreferrer">
-                      Circle Faucet
+                    <strong>Note:</strong> Noviq is currently running on Arc Mainnet. You can obtain
+                    USDC from an exchange to use on the{" "}
+                    <a href="https://circle.com/en/usdc" target="_blank" rel="noopener noreferrer">
+                      Network
                     </a>
                     .
                   </p>

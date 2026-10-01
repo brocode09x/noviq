@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_34-0093f6682aa2a7a6873d356eb43b06ea6efc53d5",
+  "solcVersion": "0.8.34",
+  "solcLongVersion": "0.8.34+commit.80d5c536",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.18.1"
+  },
+  "userSourceNameMap": {
+    "contracts/NoviqMarketplace.sol": "project/contracts/NoviqMarketplace.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "osaka",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/NoviqMarketplace.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ninterface IERC20 {\n    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);\n}\n\ncontract NoviqMarketplace {\n    address public backendSigner;\n    IERC20 public usdcToken;\n\n    event PaymentProcessed(address indexed user, address indexed seller, uint256 amount, string refId);\n\n    constructor(address _usdcToken, address _backendSigner) {\n        usdcToken = IERC20(_usdcToken);\n        backendSigner = _backendSigner;\n    }\n\n    // Updates the backend wallet authorized to process payments\n    function setBackendSigner(address _newSigner) external {\n        require(msg.sender == backendSigner, \"Only current backend can update signer\");\n        backendSigner = _newSigner;\n    }\n\n    // Called by the backend when an API request is successfully served\n    function payForService(address user, address seller, uint256 amount, string calldata refId) external {\n        require(msg.sender == backendSigner, \"Only backend can process payments\");\n        \n        // Transfer USDC directly from the user to the seller\n        // Note: The user MUST have called usdcToken.approve(address(this), amount) prior to this\n        bool success = usdcToken.transferFrom(user, seller, amount);\n        require(success, \"USDC transfer failed\");\n\n        emit PaymentProcessed(user, seller, amount, refId);\n    }\n}\n"
+      }
+    }
+  }
+}

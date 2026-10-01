@@ -67,12 +67,6 @@ def init_db():
                 return
             with conn.cursor() as cur:
                 cur.execute("""
-                    CREATE TABLE IF NOT EXISTS wallets (
-                        user_id TEXT PRIMARY KEY,
-                        wallet_id TEXT NOT NULL
-                    )
-                """)
-                cur.execute("""
                     CREATE TABLE IF NOT EXISTS transactions (
                         id SERIAL PRIMARY KEY,
                         user_id TEXT NOT NULL,
@@ -113,50 +107,15 @@ def init_db():
                         consumed BOOLEAN NOT NULL DEFAULT FALSE
                     )
                 """)
-                cur.execute("""
-                    CREATE TABLE IF NOT EXISTS pending_requests (
-                        id TEXT PRIMARY KEY,
-                        user_id TEXT NOT NULL,
-                        service_id TEXT NOT NULL,
-                        cost REAL NOT NULL,
-                        status TEXT NOT NULL DEFAULT 'pending',
-                        created_at TEXT NOT NULL,
-                        completed_at TEXT,
-                        tx_hash TEXT,
-                        error_message TEXT
-                    )
-                """)
             conn.commit()
         _db_initialized = True
         logger.info("Database schema initialised.")
     except Exception as e:
         logger.error("Failed to initialize database: %s", e)
 
-# Wallet Operations
-def get_wallet(user_id: str) -> str | None:
-    with _borrow() as conn:
-        if conn is None:
-            return None
-        with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("SELECT wallet_id FROM wallets WHERE user_id = %s", (user_id,))
-            row = cur.fetchone()
-            return row["wallet_id"] if row else None
 
-def save_wallet(user_id: str, wallet_id: str):
-    with _borrow() as conn:
-        if conn is None:
-            return
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                INSERT INTO wallets (user_id, wallet_id) VALUES (%s, %s)
-                ON CONFLICT (user_id) DO UPDATE SET wallet_id = EXCLUDED.wallet_id
-                """,
-                (user_id, wallet_id)
-            )
-        conn.commit()
+# ── Transaction Operations ──────────────────────────────────────────
 
-# Transaction Operations
 def save_transaction(user_id: str, service_id: str, service_name: str, cost: float, status: str, tx_hash: str):
     with _borrow() as conn:
         if conn is None:
@@ -227,7 +186,8 @@ def check_rate_limit(key_hash: str, limit: int = 60, window_seconds: int = 60) -
             return count <= limit
 
 
-# API Key Operations
+# ── API Key Operations ──────────────────────────────────────────────
+
 def save_api_key(key_hash: str, key_prefix: str, wallet_address: str, label: str = ""):
     with _borrow() as conn:
         if conn is None:
@@ -298,7 +258,8 @@ def update_api_key_last_used(key_hash: str):
         conn.commit()
 
 
-# Auth Nonce Operations
+# ── Auth Nonce Operations ───────────────────────────────────────────
+
 def save_nonce(wallet_address: str, nonce: str):
     # Lazily clean up expired nonces first
     cleanup_expired_nonces()
@@ -361,58 +322,4 @@ def cleanup_expired_nonces():
                 "DELETE FROM auth_nonces WHERE created_at < %s",
                 (cutoff,)
             )
-        conn.commit()
-
-
-# ── Pending Request Operations ──────────────────────────────────────
-
-def create_pending_request(request_id: str, user_id: str, service_id: str, cost: float):
-    with _borrow() as conn:
-        if conn is None:
-            return
-        with conn.cursor() as cur:
-            cur.execute("""
-                INSERT INTO pending_requests (id, user_id, service_id, cost, status, created_at)
-                VALUES (%s, %s, %s, %s, 'pending', %s)
-            """, (
-                request_id,
-                user_id,
-                service_id,
-                cost,
-                datetime.now(timezone.utc).isoformat()
-            ))
-        conn.commit()
-
-
-def complete_pending_request(request_id: str, tx_hash: str):
-    with _borrow() as conn:
-        if conn is None:
-            return
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE pending_requests
-                SET status = 'completed', tx_hash = %s, completed_at = %s
-                WHERE id = %s
-            """, (
-                tx_hash,
-                datetime.now(timezone.utc).isoformat(),
-                request_id,
-            ))
-        conn.commit()
-
-
-def fail_pending_request(request_id: str, error_message: str):
-    with _borrow() as conn:
-        if conn is None:
-            return
-        with conn.cursor() as cur:
-            cur.execute("""
-                UPDATE pending_requests
-                SET status = 'failed', error_message = %s, completed_at = %s
-                WHERE id = %s
-            """, (
-                error_message,
-                datetime.now(timezone.utc).isoformat(),
-                request_id,
-            ))
         conn.commit()
