@@ -8,14 +8,15 @@ function subscribeTheme(callback: () => void) {
 }
 
 function getThemeSnapshot(): "light" | "dark" {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
   const saved = localStorage.getItem("noviq_theme");
+  if (saved === "light") return "light";
   if (saved === "dark") return "dark";
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+  return document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
 }
 
 function getThemeServerSnapshot(): "light" | "dark" {
-  return "light";
+  return "dark";
 }
 
 export function ThemeToggle({

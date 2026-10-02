@@ -365,6 +365,12 @@ body.playground-page .footer {
   box-sizing: border-box;
 }
 
+.btn-run .run-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .btn-run:disabled {
   opacity: 0.6;
   cursor: not-allowed;

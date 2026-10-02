@@ -1,6 +1,6 @@
 # Noviq
 
-**Pay-per-request AI services powered by Circle Nanopayments on Arc.**
+**Pay-per-request AI services powered by on-chain USDC payments on Arc.**
 
 No subscriptions. No gas fees. Just sign and run.
 
@@ -21,9 +21,9 @@ Noviq is an API marketplace where developers pay for exactly what they use — i
 
 | Service | ID | Price (USDC) | Description |
 |---|---|---|---|
-| 📈 Token Price | `token_price` | $0.001 | Real-time crypto prices via CoinGecko |
-| 🐦 Twitter Fetch | `twitter_fetch` | $0.002 | Recent tweets for a handle |
-| 🧠 Nemotron-3 | `nemotron-3-super` | $0.002 | NVIDIA MoE LLM for agentic tasks |
+| 📈 Token Price | `token_price` | $0.005 | Real-time crypto prices via CoinGecko |
+| 🐦 Twitter Fetch | `twitter_fetch` | $0.02 | Recent tweets for a handle |
+| 🧠 Nemotron-3 | `nemotron-3-super` | $0.05 | NVIDIA MoE LLM for agentic tasks |
 
 ---
 
@@ -34,7 +34,7 @@ Noviq is an API marketplace where developers pay for exactly what they use — i
 | Frontend | Next.js 16, React 19, TypeScript |
 | Backend | Python, FastAPI, Uvicorn |
 | Blockchain | Arc Mainnet (Chain ID 5042) |
-| Payments | USDC (ERC-20), Circle Nanopayments |
+| Payments | USDC (ERC-20) |
 | Smart Contract | Solidity (Hardhat) |
 | Database | PostgreSQL (Neon serverless) |
 | Deployment | Vercel (frontend + serverless Python) |
@@ -103,7 +103,7 @@ noviq/
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/seyoj7/noviq.git
+git clone https://github.com/brocode09x/noviq.git
 cd noviq
 
 # Frontend dependencies
@@ -169,7 +169,7 @@ curl -X POST https://your-domain.com/run \
 {
   "service_id": "token_price",
   "result": "96543.21",
-  "price_usdc": 0.001,
+  "price_usdc": 0.005,
   "tx_hash": "0x5f3a..."
 }
 ```

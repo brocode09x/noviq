@@ -43,7 +43,6 @@ export function Navbar({ activePage }: { activePage?: string }) {
           >
             <Image src="/assets/Noviq.png" alt="Noviq Logo" width={26} height={26} className="brand-logo" priority />
             <span className="brand-text">noviq</span>
-            <span className="beta-badge">beta</span>
           </Link>
         </div>
 
@@ -142,7 +141,6 @@ export function Navbar({ activePage }: { activePage?: string }) {
             <div className="navbar-brand">
               <Image src="/assets/Noviq.png" alt="Noviq Logo" width={26} height={26} className="brand-logo" />
               <span className="brand-text">noviq</span>
-              <span className="beta-badge">beta</span>
             </div>
             <button
               className="btn btn-ghost btn-sm btn-icon"
@@ -281,7 +279,7 @@ export function Navbar({ activePage }: { activePage?: string }) {
               Circle USDC Faucet ↗
             </a>
             <a
-              href="https://github.com/seyoj7/noviq"
+              href="https://github.com/brocode09x/noviq"
               target="_blank"
               rel="noopener noreferrer"
               className="mobile-menu-ext-link"

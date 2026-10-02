@@ -23,7 +23,7 @@ export default function LandingPage() {
   const [loadingServices, setLoadingServices] = useState(true);
   const [servicesError, setServicesError] = useState<string | null>(null);
   const origin = useSyncExternalStore(
-    () => () => {},
+    () => () => { },
     () => window.location.origin,
     () => "https://YOUR_DOMAIN"
   );
@@ -210,12 +210,6 @@ console.log(data.result);`;
             <div className="hero-diagram-box">
               <div className="diagram-header">
                 <div className="diagram-eyebrow">TRANSACTION FLOW</div>
-                <div className="diagram-protocol-badges">
-                  <span className="protocol-badge">x402</span>
-                  <span className="protocol-badge">EIP-3009</span>
-                  <span className="protocol-badge">Circle</span>
-                  <span className="protocol-badge">USDC</span>
-                </div>
               </div>
 
               {/* Desktop SVG Diagram */}
@@ -278,14 +272,14 @@ console.log(data.result);`;
                   <line x1="90" y1="225" x2="494" y2="225" stroke="#4A454E" strokeWidth="0.75" />
 
                   <rect x="16" y="250" width="120" height="38" rx="5" fill="#252228" stroke="#4A454E" strokeWidth="1" />
-                  <text x="76" y="265" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="10.5" fontWeight="700" fill="#FFFFFF">Circle</text>
-                  <text x="76" y="278" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#D0C9B9" fontWeight="500">Programmable Wallets</text>
+                  <text x="76" y="265" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="10.5" fontWeight="700" fill="#FFFFFF">Wallet</text>
+                  <text x="76" y="278" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#D0C9B9" fontWeight="500">Sign &amp; Execute</text>
 
                   <line x1="136" y1="269" x2="188" y2="269" stroke="#6B6570" strokeWidth="1.2" strokeDasharray="4 3" markerEnd="url(#arr-a)" />
 
                   <rect x="195" y="250" width="120" height="38" rx="5" fill="#252228" stroke="#4A454E" strokeWidth="1" />
-                  <text x="255" y="265" textAnchor="middle" fontFamily="'JetBrains Mono', monospace" fontSize="10.5" fontWeight="700" fill="#FFFFFF">USDC</text>
-                  <text x="255" y="278" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#D0C9B9" fontWeight="500">transfer() on Arc</text>
+                  <text x="255" y="265" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="10.5" fontWeight="700" fill="#FFFFFF">Smart Contract</text>
+                  <text x="255" y="278" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#D0C9B9" fontWeight="500">USDC transfer()</text>
 
                   <line x1="315" y1="269" x2="367" y2="269" stroke="#6B6570" strokeWidth="1.2" strokeDasharray="4 3" markerEnd="url(#arr-a)" />
 
@@ -346,13 +340,13 @@ console.log(data.result);`;
                   </div>
                   <div className="mobile-flow-steps">
                     <div className="mobile-flow-node">
-                      <span className="mobile-flow-node-title">Circle</span>
-                      <span className="mobile-flow-node-sub">Programmable Wallets</span>
+                      <span className="mobile-flow-node-title">Web3 Wallet</span>
+                      <span className="mobile-flow-node-sub">Sign &amp; Execute</span>
                     </div>
                     <div className="mobile-flow-arrow">→</div>
                     <div className="mobile-flow-node">
-                      <span className="mobile-flow-node-title">USDC</span>
-                      <span className="mobile-flow-node-sub">transfer() on Arc</span>
+                      <span className="mobile-flow-node-title">Smart Contract</span>
+                      <span className="mobile-flow-node-sub">USDC transfer()</span>
                     </div>
                     <div className="mobile-flow-arrow">→</div>
                     <div className="mobile-flow-node">
@@ -363,7 +357,7 @@ console.log(data.result);`;
               </div>
             </div>
             <p className="hero-diagram-caption">
-              Your agent calls an API, the service runs first — you only pay in USDC via Circle when
+              Your agent calls an API, the service runs first — you only pay in USDC when
               the result is delivered. Settled instantly on Arc, zero gas fees.
             </p>
           </div>
@@ -404,8 +398,8 @@ console.log(data.result);`;
               <h3 className="wf-title">Connect Wallet</h3>
             </div>
             <p className="wf-desc">
-              Connect via any EVM-compatible wallet. Your wallet address acts as your identity. Upon
-              connecting, a Circle Programmable Wallet is provisioned for you.
+              Connect via any EVM-compatible wallet. Your wallet address acts as your identity. No extra
+              sign-ups or accounts are required.
             </p>
           </div>
 
@@ -429,9 +423,8 @@ console.log(data.result);`;
               <h3 className="wf-title">Generate API Key</h3>
             </div>
             <p className="wf-desc">
-              Go to the <strong>API</strong> page and sign with your wallet for ownership
-              verification to generate a key tied to your wallet address. The key is displayed only
-              once.
+              Go to the <strong>API Keys</strong> page and sign with your wallet for ownership
+              verification to generate a key tied to your wallet address.
             </p>
           </div>
 
@@ -481,8 +474,8 @@ console.log(data.result);`;
               <h3 className="wf-title">Pay &amp; Receive Result</h3>
             </div>
             <p className="wf-desc">
-              A USDC micro-transfer is executed on Arc. Once the transaction is confirmed on-chain,
-              the requested service runs and returns the JSON result.
+              The service runs first. If successful, a USDC micro-transfer is executed on Arc. Once the
+              transaction is confirmed on-chain, the JSON result is returned.
             </p>
           </div>
         </div>

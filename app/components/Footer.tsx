@@ -40,7 +40,7 @@ export function Footer() {
         <div className="footer-tags">built on arc + circle</div>
         <div className="footer-links">
           <a
-            href="https://github.com/seyoj7/noviq"
+            href="https://github.com/brocode09x/noviq"
             target="_blank"
             rel="noopener noreferrer"
             style={{

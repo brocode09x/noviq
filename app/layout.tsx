@@ -44,6 +44,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      data-theme="dark"
       className={`${inter.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
@@ -55,7 +56,9 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                if (localStorage.getItem("noviq_theme") === "dark") {
+                if (localStorage.getItem("noviq_theme") === "light") {
+                  document.documentElement.removeAttribute("data-theme");
+                } else {
                   document.documentElement.setAttribute("data-theme", "dark");
                 }
               } catch (e) {}
