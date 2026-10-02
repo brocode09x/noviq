@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 CHALLENGE_PREFIX = "Noviq: Verify wallet ownership\nNonce: "
 
 
-# ── Key helpers ──────────────────────────────────────────────────────
+# Key helpers
 
 def generate_api_key() -> tuple[str, str, str]:
     raw = "nvq_" + secrets.token_hex(24)          # 48 hex chars
     key_hash = hash_api_key(raw)
-    key_prefix = raw[:12]                          # "nvq_" + 8 hex
+    key_prefix = raw[:12]                         # "nvq_" + 8 hex
     return raw, key_hash, key_prefix
 
 
@@ -35,7 +35,7 @@ def build_challenge_message(nonce: str) -> str:
     return f"{CHALLENGE_PREFIX}{nonce}"
 
 
-# ── FastAPI dependency ───────────────────────────────────────────────
+# FastAPI dependency
 
 async def validate_api_key(
     authorization: str | None = Header(default=None),
@@ -87,7 +87,7 @@ async def optional_validate_api_key(
         return None
 
 
-# ── Wallet signature verification ────────────────────────────────────
+# Wallet signature verification
 
 def verify_wallet_signature(
     wallet_address: str,
@@ -135,4 +135,3 @@ def verify_wallet_signature(
     # 5. Consume the nonce
     database.consume_nonce(nonce)
     return True
-

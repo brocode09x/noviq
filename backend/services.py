@@ -10,11 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class ServiceExecutionError(Exception):
-    """Raised when a service fails to produce a valid result.
-    
-    This signals the caller that the request should NOT be charged,
-    as opposed to a successful result string which should be charged.
-    """
     pass
 
 

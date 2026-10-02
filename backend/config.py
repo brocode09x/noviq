@@ -24,10 +24,7 @@ GATEWAY_WALLET_ADDRESS: str = "0x0077777d7EBA4688BDeF3E311b846F25870A19B9"
 # Chain ID for Arc mainnet — needed for EIP-3009 domain separator
 ARC_CHAIN_ID: int = int(os.getenv("ARC_CHAIN_ID", "5042"))
 
-
 # Seller wallet (receives nanopayment authorizations)
-# This is the Circle wallet address for this marketplace (the "seller").
-# Set after running wallet.py:setup_seller_wallet() for the first time.
 SELLER_WALLET_ADDRESS: str = os.getenv("SELLER_WALLET_ADDRESS", "")
 SELLER_WALLET_ID: str = os.getenv("SELLER_WALLET_ID", "")
 

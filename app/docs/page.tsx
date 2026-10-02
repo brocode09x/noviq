@@ -31,7 +31,6 @@ export default function DocsPage() {
   const [activeSection, setActiveSection] = useState("introduction");
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  // ScrollSpy observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -69,7 +68,7 @@ export default function DocsPage() {
 
   return (
     <div className="docs-body">
-      {/* Docs Navigation Bar */}
+      
       <nav id="navbar" className="navbar docs-navbar">
         <div className="navbar-brand">
           <Link
@@ -124,7 +123,7 @@ export default function DocsPage() {
         </div>
       </nav>
 
-      {/* Sidebar mobile backdrop */}
+      
       <div
         className={`docs-sidebar-backdrop ${sidebarOpen ? "open" : ""}`}
         id="docs-sidebar-backdrop"
@@ -132,7 +131,7 @@ export default function DocsPage() {
       />
 
       <div className="docs-layout">
-        {/* Left Sidebar */}
+        
         <aside className={`docs-sidebar ${sidebarOpen ? "open" : ""}`} id="docs-sidebar">
           <div className="docs-sidebar-content">
             <div className="docs-nav-group">
@@ -290,7 +289,7 @@ export default function DocsPage() {
           </div>
         </aside>
 
-        {/* Main Content */}
+        
         <main className="docs-main">
           <article className="docs-article" id="docs-article">
             <div className="docs-header">
@@ -339,7 +338,7 @@ export default function DocsPage() {
                 </div>
               </div>
 
-              {/* ── Quickstart ─────────────────────────────────────── */}
+              
               <h2 id="quickstart">Quickstart</h2>
               <p>
                 Integrating Noviq into your application takes two steps: generate an API key through
@@ -437,7 +436,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── Authentication ─────────────────────────────────── */}
+              
               <h2 id="authentication">Authentication</h2>
               <p>
                 Noviq uses <strong>API key-based authentication</strong> with{" "}
@@ -546,7 +545,7 @@ console.log(data.result);`}
                 </div>
               </div>
 
-              {/* ── Nanopayments ──────────────────────────────────── */}
+              
               <h2 id="nanopayments">Nanopayments</h2>
               <p>
                 Noviq&apos;s nanopayment infrastructure enables micro-transactions as small as{" "}
@@ -566,7 +565,7 @@ console.log(data.result);`}
                 places). For example, $0.001 USDC = <code>1000</code> atomic units.
               </p>
 
-              {/* ── Services Registry ──────────────────────────────── */}
+              
               <h2 id="services-registry">Services Registry</h2>
               <p>
                 The registry contains all available AI services, their costs, and expected inputs.
@@ -625,7 +624,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── Arc Network ──────────────────────────────────────── */}
+              
               <h2 id="arc-network">Arc Network</h2>
               <p>
                 Arc is the underlying blockchain infrastructure providing fast settlement and low
@@ -670,7 +669,7 @@ console.log(data.result);`}
                 </table>
               </div>
 
-              {/* ── Rate Limits ──────────────────────────────────────── */}
+              
               <h2 id="rate-limits">Rate Limits</h2>
               <p>
                 Each API key is subject to a rate limit of <strong>60 requests per minute</strong>.
@@ -703,7 +702,7 @@ console.log(data.result);`}
                 </table>
               </div>
 
-              {/* ── POST /run ──────────────────────────────────────── */}
+              
               <h2 id="api-run">POST /run</h2>
               <p>
                 The primary endpoint to execute a service and handle payment automatically. The
@@ -805,7 +804,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── POST /run-service ─────────────────────────────── */}
+              
               <h2 id="api-run-service">POST /run-service</h2>
               <p>
                 An alternative execution endpoint that supports the <strong>x402 payment
@@ -884,7 +883,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── GET /services ─────────────────────────────────── */}
+              
               <h2 id="api-services">GET /services</h2>
               <p>
                 Returns a list of all available services on the Noviq platform. No authentication
@@ -952,7 +951,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── GET /transactions ─────────────────────────────── */}
+              
               <h2 id="api-transactions">GET /transactions/&#123;user_id&#125;</h2>
               <p>
                 Fetch the complete transaction history for a given wallet address (EVM checksum
@@ -997,7 +996,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── Wallet Endpoints ──────────────────────────────── */}
+              
               <h2 id="api-wallet">Wallet Endpoints</h2>
               <p>
                 Wallet endpoints allow you to create or retrieve wallet info and USDC balance for
@@ -1082,7 +1081,7 @@ console.log(data.result);`}
                 </table>
               </div>
 
-              {/* ── API Key Management ────────────────────────────── */}
+              
               <h2 id="api-keys-endpoints">API Key Management</h2>
               <p>
                 These endpoints allow you to create, list, and revoke API keys for your wallet
@@ -1254,7 +1253,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── GET /health ───────────────────────────────────── */}
+              
               <h2 id="api-health">GET /health</h2>
               <p>
                 Returns the operational status of the backend. Useful for monitoring and
@@ -1293,7 +1292,7 @@ console.log(data.result);`}
                 </pre>
               </div>
 
-              {/* ── Error Codes ───────────────────────────────────── */}
+              
               <h2 id="error-codes">Error Codes</h2>
               <p>
                 All error responses include a consistent JSON body with a <code>result</code> field

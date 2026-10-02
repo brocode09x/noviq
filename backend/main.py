@@ -79,12 +79,7 @@ app.add_middleware(
 
 
 class PathRewriteMiddleware:
-    """
-    Normalizes request paths from Vercel rewrites or Next.js proxies.
-    Inspects Vercel's x-matched-path / x-forwarded-uri headers and
-    strips prefixes like /api/index.py, /api/index, or /api so routes
-    match backend definitions regardless of edge rewrite format.
-    """
+
 
     def __init__(self, app: ASGIApp):
         self.app = app
@@ -128,7 +123,7 @@ if not any(getattr(route, "path", None) == "/" for route in app.routes):
         }
 
 
-# ── Consistent error responses ──────────────────────────────────────
+# Consistent error responses
 # Always include "result" in the JSON body so clients that do
 # response.json()["result"] never crash with a KeyError.
 
@@ -144,7 +139,7 @@ async def unified_http_error(_request: Request, exc: HTTPException):
     )
 
 
-# ── Public routes (no auth) ─────────────────────────────────────────
+# Public routes (no auth)
 
 @app.get("/health", response_model=HealthResponse, tags=["Meta"])
 async def health() -> HealthResponse:
@@ -169,7 +164,7 @@ async def list_services() -> list[ServiceInfo]:
     ]
 
 
-# ── Auth nonce endpoint ─────────────────────────────────────────────
+# Auth nonce endpoint
 
 @app.get("/auth/nonce/{wallet_address}", response_model=NonceResponse, tags=["Auth"])
 async def get_auth_nonce(wallet_address: str) -> NonceResponse:
@@ -180,16 +175,13 @@ async def get_auth_nonce(wallet_address: str) -> NonceResponse:
     return NonceResponse(nonce=nonce, message=message, expires_in=300)
 
 
-# ── Internal service execution helper ───────────────────────────────
+# Internal service execution helper
 
 async def _execute_service(
     body: RunServiceRequest,
     wallet_address: str,
 ) -> dict:
-    """
-    Shared logic for running a service, charging the user, and recording
-    the transaction.  Called by both /run and /run-service.
-    """
+
     wallet_address = to_checksum_address(wallet_address)
 
     if body.service_id not in service_module.SERVICE_REGISTRY:
@@ -244,7 +236,7 @@ async def _execute_service(
     }
 
 
-# ── Service execution routes (API key required) ─────────────────────
+# Service execution routes (API key required)
 
 @app.post("/run", tags=["Services"], response_model=None)
 async def run_simple(
@@ -295,7 +287,7 @@ async def get_user_transactions(
     return database.get_transactions(target)
 
 
-# ── Wallet routes ───────────────────────────────────────────────────
+# Wallet routes
 
 @app.post("/wallet", response_model=WalletInfo, tags=["Wallets"])
 async def create_or_get_wallet(body: CreateWalletRequest) -> WalletInfo:
@@ -326,7 +318,7 @@ async def get_wallet(
         raise HTTPException(status_code=502, detail=f"Circle Wallets API error: {exc.response.status_code}")
 
 
-# ── API Key management routes ───────────────────────────────────────
+# API Key management routes
 
 @app.post("/api-keys", response_model=ApiKeyCreatedResponse, tags=["API Keys"])
 async def create_api_key(body: GenerateApiKeyRequest):
@@ -405,7 +397,7 @@ async def revoke_api_key_endpoint(
     return {"status": "revoked", "key_prefix": key_prefix}
 
 
-# ── Payment helper ──────────────────────────────────────────────────
+# Payment helper
 
 async def handle_payment_flow(
     x_payment_authorization: str | None,
@@ -465,9 +457,6 @@ async def handle_payment_flow(
         )
 
 if __name__ == "__main__":
-
-    # If running from inside the 'backend' folder, change working directory
-    # to the project root so uvicorn's reload mechanism can find 'backend.main:app'
     cwd = Path.cwd()
     if cwd.name == "backend":
         os.chdir(cwd.parent)

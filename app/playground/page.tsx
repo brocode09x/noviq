@@ -30,14 +30,12 @@ export default function PlaygroundPage() {
     () => ""
   );
 
-  // Sync API key from context/localStorage
   useEffect(() => {
     if (apiKey) {
       queueMicrotask(() => setLocalApiKey(apiKey));
     }
   }, [apiKey]);
 
-  // Fetch available services
   useEffect(() => {
     async function loadServices() {
       try {
@@ -167,7 +165,7 @@ export default function PlaygroundPage() {
           </div>
 
           <div id="playground-connected" className="playground-layout glass-panel">
-            {/* Top Section */}
+            
             <div className="playground-top-section">
               <label className="form-label text-uppercase key-label">
                 PERSONAL API KEY
@@ -288,9 +286,9 @@ export default function PlaygroundPage() {
               </div>
             </div>
 
-            {/* Split Layout */}
+            
             <div className="playground-split-layout">
-              {/* Configuration Panel (Left) */}
+              
               <div className="playground-config">
                 <div className="form-group service-group">
                   <div className="service-selector-row">
@@ -351,7 +349,7 @@ export default function PlaygroundPage() {
                   </div>
                 </div>
 
-                {/* Mobile-only secondary Run button */}
+                
                 <div className="playground-mobile-run-row">
                   <button
                     className="btn btn-primary btn-run btn-run-mobile"
@@ -380,7 +378,7 @@ export default function PlaygroundPage() {
                 </div>
               </div>
 
-              {/* Output Panel (Right) */}
+              
               <div className="playground-output">
                 <div className="playground-output-header">
                   <h3 className="playground-panel-title">
@@ -443,7 +441,7 @@ export default function PlaygroundPage() {
                   )}
                 </div>
 
-                {/* Payment / TX info footer */}
+                
                 {responseData?.tx_hash && (
                   <div id="tx-info-footer" className="playground-tx-footer">
                     <div className="tx-info-row">

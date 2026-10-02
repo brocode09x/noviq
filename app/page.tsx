@@ -28,7 +28,6 @@ export default function LandingPage() {
     () => "https://YOUR_DOMAIN"
   );
 
-  // Scroll reveal observer
   useEffect(() => {
     const revealElements = document.querySelectorAll(".reveal-on-scroll");
     if (!revealElements.length) return;
@@ -49,7 +48,6 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, [services, servicesError]);
 
-  // Fetch services from backend
   const loadServices = useCallback(async () => {
     setLoadingServices(true);
     setServicesError(null);
@@ -84,7 +82,6 @@ export default function LandingPage() {
     });
   }, [loadServices]);
 
-  // Fetch transactions for connected wallet
   useEffect(() => {
     if (!userId) {
       queueMicrotask(() => setTransactions([]));
@@ -161,7 +158,7 @@ console.log(data.result);`;
       <Navbar />
       <ThemeToggle />
 
-      {/* Hero Section */}
+      
       <header id="hero" className="hero">
         <div className="hero-content-wrapper">
           <div className="hero-content-left">
@@ -212,7 +209,7 @@ console.log(data.result);`;
                 <div className="diagram-eyebrow">TRANSACTION FLOW</div>
               </div>
 
-              {/* Desktop SVG Diagram */}
+              
               <div className="diagram-desktop-view">
                 <svg viewBox="0 0 510 300" xmlns="http://www.w3.org/2000/svg" className="diagram-svg">
                   <defs>
@@ -230,7 +227,7 @@ console.log(data.result);`;
                     </marker>
                   </defs>
 
-                  {/* ROW 1: Request Layer */}
+                  
                   <text x="16" y="20" fontFamily="'JetBrains Mono', monospace" fontSize="9" fill="#B8B2A8" letterSpacing="0.08em" fontWeight="700">01 REQUEST</text>
                   <line x1="90" y1="15" x2="494" y2="15" stroke="#4A454E" strokeWidth="0.75" />
 
@@ -248,7 +245,7 @@ console.log(data.result);`;
                   <text x="434" y="55" textAnchor="middle" fontFamily="'JetBrains Mono', monospace" fontSize="10.5" fontWeight="700" fill="#FFFFFF">Balance</text>
                   <text x="434" y="68" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="8.5" fill="#D0C9B9" fontWeight="500">Pre-check ✓</text>
 
-                  {/* ROW 2: Service Layer */}
+                  
                   <text x="16" y="125" fontFamily="'JetBrains Mono', monospace" fontSize="9" fill="#B8B2A8" letterSpacing="0.08em" fontWeight="700">02 SERVICE</text>
                   <line x1="85" y1="120" x2="494" y2="120" stroke="#4A454E" strokeWidth="0.75" />
 
@@ -267,7 +264,7 @@ console.log(data.result);`;
                   <rect x="374" y="145" width="120" height="38" rx="5" fill="#252228" stroke="#4A454E" strokeWidth="1" />
                   <text x="434" y="169" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="11" fontWeight="700" fill="#FFFFFF">✓ Success</text>
 
-                  {/* ROW 3: Payment Layer */}
+                  
                   <text x="16" y="230" fontFamily="'JetBrains Mono', monospace" fontSize="9" fill="#B8B2A8" letterSpacing="0.08em" fontWeight="700">03 PAYMENT</text>
                   <line x1="90" y1="225" x2="494" y2="225" stroke="#4A454E" strokeWidth="0.75" />
 
@@ -288,7 +285,7 @@ console.log(data.result);`;
                 </svg>
               </div>
 
-              {/* Mobile Flow Diagram */}
+              
               <div className="diagram-mobile-view">
                 <div className="mobile-flow-layer">
                   <div className="mobile-flow-layer-header">
@@ -377,7 +374,7 @@ console.log(data.result);`;
         </div>
       </header>
 
-      {/* How It Works Section */}
+      
       <section id="how-it-works" className="section section-how">
         <div className="section-header reveal-on-scroll">
           <h2 className="section-title">How It Works</h2>
@@ -385,7 +382,7 @@ console.log(data.result);`;
         </div>
 
         <div className="workflow-pipeline">
-          {/* Step 1 */}
+          
           <div className="wf-step reveal-on-scroll delay-100">
             <div className="wf-step-head">
               <span className="wf-num">01</span>
@@ -410,7 +407,7 @@ console.log(data.result);`;
             </svg>
           </div>
 
-          {/* Step 2 */}
+          
           <div className="wf-step reveal-on-scroll delay-200">
             <div className="wf-step-head">
               <span className="wf-num">02</span>
@@ -435,7 +432,7 @@ console.log(data.result);`;
             </svg>
           </div>
 
-          {/* Step 3 */}
+          
           <div className="wf-step reveal-on-scroll delay-300">
             <div className="wf-step-head">
               <span className="wf-num">03</span>
@@ -461,7 +458,7 @@ console.log(data.result);`;
             </svg>
           </div>
 
-          {/* Step 4 */}
+          
           <div className="wf-step reveal-on-scroll delay-400">
             <div className="wf-step-head">
               <span className="wf-num">04</span>
@@ -481,7 +478,7 @@ console.log(data.result);`;
         </div>
       </section>
 
-      {/* Services Grid */}
+      
       <section id="services" className="section section-services">
         <div className="section-header reveal-on-scroll">
           <h2 className="section-title">Choose an API Service</h2>
@@ -591,7 +588,7 @@ console.log(data.result);`;
         </div>
       </section>
 
-      {/* Global Snippet Panel */}
+      
       <section id="global-snippet" className="section section-snippet section-snippet-wrapper">
         <div className="code-snippet-panel reveal-on-scroll">
           <div className="code-snippet-header">
@@ -664,7 +661,7 @@ console.log(data.result);`;
         </div>
       </section>
 
-      {/* Transaction History / Logs Section */}
+      
       <section id="history" className="section section-history">
         <div className="section-header reveal-on-scroll">
           <h2 className="section-title">Transaction History</h2>

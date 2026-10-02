@@ -1,4 +1,4 @@
-/* ── Playground Page Layout & Sticky Footer ───────────────────────── */
+
 .playground-page,
 body.playground-page {
   min-height: 100vh;
@@ -56,7 +56,6 @@ body.playground-page .footer {
   flex-direction: column;
 }
 
-/* ── Top Section (API Key & Run Button) ──────────────────────────── */
 .playground-top-section {
   padding: 14px var(--space-lg);
   border-bottom: 1px solid var(--border-light);
@@ -136,7 +135,6 @@ body.playground-page .footer {
   font-size: 0.8rem;
 }
 
-/* ── Split Layout (Config & Output) ──────────────────────────────── */
 .playground-split-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -513,7 +511,6 @@ body.playground-page .footer {
   text-decoration: underline;
 }
 
-/* ── Mobile Responsive Styles (< 768px) ───────────────────────────── */
 @media (max-width: 768px) {
   .playground-page .playground-main-section,
   body.playground-page .playground-main-section {
@@ -554,7 +551,7 @@ body.playground-page .footer {
   #playground-api-key {
     width: 100%;
     min-width: 0;
-    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    font-size: 16px !important; 
     height: 42px;
   }
 
@@ -599,7 +596,7 @@ body.playground-page .footer {
 
   .code-input.custom-textarea {
     min-height: 120px;
-    font-size: 16px !important; /* Prevents auto-zoom on iOS */
+    font-size: 16px !important; 
     padding: 10px;
   }
 

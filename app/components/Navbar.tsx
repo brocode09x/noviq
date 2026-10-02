@@ -125,7 +125,7 @@ export function Navbar({ activePage }: { activePage?: string }) {
         </div>
       </nav>
 
-      {/* Mobile Navigation Drawer */}
+      
       <div
         id="mobile-menu"
         className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}

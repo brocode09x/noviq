@@ -1,6 +1,5 @@
-// ── Shared TypeScript interfaces ──────────────────────────────────
 
-/** A service entry returned by GET /services */
+
 export interface ServiceItem {
   id: string;
   name: string;
@@ -8,7 +7,7 @@ export interface ServiceItem {
   price_usdc: number;
 }
 
-/** A single row in the transaction history table */
+
 export interface TransactionItem {
   service_id: string;
   cost: number;
@@ -18,7 +17,7 @@ export interface TransactionItem {
   time: string;
 }
 
-/** Shape of the JSON response from POST /run */
+
 export interface RunResponse {
   tx_hash?: string;
   cost_usdc?: number;
@@ -27,7 +26,7 @@ export interface RunResponse {
   [key: string]: unknown;
 }
 
-/** API key record returned by GET /api-keys/{wallet_address} */
+
 export interface ApiKeyItem {
   id?: string;
   key_prefix: string;

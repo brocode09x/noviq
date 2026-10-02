@@ -42,6 +42,14 @@
     {
       "source": "/api-keys/:path*",
       "destination": "/api/index.py"
+    },
+    {
+      "source": "/openapi.json",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/redoc",
+      "destination": "/api/index.py"
     }
   ]
 }

@@ -1,8 +1,3 @@
-/* API Keys Page — Dedicated Styles */
-/* Overrides dark-theme colors from the base stylesheet so
-   everything is readable on the light glass-panel background. */
-
-/* ── Disconnected state card ──────────────────────────────────────── */
 .api-keys-disconnected {
   display: flex;
   flex-direction: column;
@@ -31,7 +26,6 @@
   color: var(--text-secondary) !important;
 }
 
-/* ── Page header text ─────────────────────────────────────────────── */
 .section-header {
   text-align: center;
   margin-bottom: var(--space-xl);
@@ -65,7 +59,6 @@
   margin: 0 auto;
 }
 
-/* ── Generate key form ────────────────────────────────────────────── */
 .api-keys-section .api-key-label-input {
   background: var(--bg-primary);
   border-color: var(--border-light);
@@ -80,18 +73,15 @@
   border-color: var(--accent-secondary);
 }
 
-/* ── Newly created key banner ─────────────────────────────────────── */
 .api-keys-section .api-key-created-value {
   color: var(--text-primary);
   background: var(--bg-tertiary);
 }
 
-/* ── "Your Keys" title ────────────────────────────────────────────── */
 .api-keys-section .api-keys-title {
   color: var(--text-primary);
 }
 
-/* ── Key list layout ──────────────────────────────────────────────── */
 .api-keys-section .api-key-list {
   max-height: none;
 }
@@ -101,7 +91,6 @@
   color: var(--text-secondary);
 }
 
-/* ── Individual key items ─────────────────────────────────────────── */
 .api-keys-section .api-key-item {
   background: var(--bg-primary);
   border-color: var(--border-light);
@@ -144,7 +133,6 @@
   margin-left: auto;
 }
 
-/* ── Page Layout & Sticky Footer ─────────────────────────────────── */
 .api-keys-page {
   min-height: 100vh;
   display: flex;
@@ -174,7 +162,6 @@
   width: 100%;
 }
 
-/* ── Responsive tweaks ────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .api-keys-main-section {
     padding: 1.5rem var(--space-md) 2rem !important;
@@ -218,12 +205,10 @@
   }
 }
 
-/* Remove the section divider line at the bottom of the main API keys page */
 main.section::after {
   display: none;
 }
 
-/* ── Skeleton loading animation ────────────────────────────────────── */
 @keyframes skeleton-pulse {
 
   0%,
@@ -247,7 +232,6 @@ main.section::after {
   animation: skeleton-pulse 1.2s ease-in-out infinite;
 }
 
-/* ── API Key Created Modal ──────────────────────────────────────────── */
 .api-key-modal {
   display: none;
   position: fixed;

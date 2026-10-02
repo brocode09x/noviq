@@ -174,7 +174,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     }
   }, [showToast]);
 
-  // Restore wallet session on initial mount
   useEffect(() => {
     const restoreSession = () => {
       const savedWallet = localStorage.getItem("noviq_wallet");
@@ -200,7 +199,6 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     queueMicrotask(restoreSession);
   }, [refreshWallet]);
 
-  // Listen to accountsChanged
   useEffect(() => {
     if (typeof window === "undefined" || !window.ethereum?.on) return;
 

@@ -22,7 +22,6 @@ export default function ApiKeysPage() {
 
   const activeKeys = apiKeys.filter((k) => !k.is_revoked);
 
-  // Fetch API keys for connected wallet
   const loadApiKeys = useCallback(async () => {
     if (!userId) return;
 
@@ -81,7 +80,6 @@ export default function ApiKeysPage() {
     setIsGenerating(true);
 
     try {
-      // Step 1: Get challenge nonce
       const nonceResp = await fetch(`/auth/nonce/${encodeURIComponent(userId)}`);
       if (!nonceResp.ok) {
         let errText = `Failed to request challenge nonce (${nonceResp.status})`;
@@ -94,7 +92,6 @@ export default function ApiKeysPage() {
       }
       const { nonce, message } = await nonceResp.json();
 
-      // Step 2: Sign challenge with MetaMask
       if (!window.ethereum?.request) {
         throw new Error("MetaMask is not available to sign the challenge.");
       }
@@ -106,7 +103,6 @@ export default function ApiKeysPage() {
         params: [message, userId],
       });
 
-      // Step 3: Create API key
       const createResp = await fetch("/api-keys", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -159,7 +155,6 @@ export default function ApiKeysPage() {
     setRevokingPrefix(keyPrefix);
 
     try {
-      // Step 1: Request nonce for revoking
       const nonceResp = await fetch(`/auth/nonce/${encodeURIComponent(userId)}`);
       if (!nonceResp.ok) {
         let errText = "Failed to get challenge nonce.";
@@ -176,13 +171,11 @@ export default function ApiKeysPage() {
       }
       const { nonce, message } = await nonceResp.json();
 
-      // Step 2: Request wallet signature
       const signature = await window.ethereum?.request({
         method: "personal_sign",
         params: [message, userId],
       });
 
-      // Step 3: Revoke key
       const revokeResp = await fetch(`/api-keys/${encodeURIComponent(keyPrefix)}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -246,7 +239,7 @@ export default function ApiKeysPage() {
           </div>
 
           {!userId ? (
-            /* Disconnected State */
+            
             <div id="api-keys-disconnected" className="api-keys-disconnected glass-panel">
               <svg
                 width="48"
@@ -274,13 +267,13 @@ export default function ApiKeysPage() {
               </button>
             </div>
           ) : (
-            /* Connected State */
+            
             <div
               id="api-keys-connected"
               className="api-keys-section glass-panel"
               style={{ padding: "var(--space-xl)" }}
             >
-              {/* Generate Key Form */}
+              
               <div className="api-key-generate" style={{ marginBottom: "var(--space-xl)" }}>
                 <input
                   type="text"
@@ -305,7 +298,7 @@ export default function ApiKeysPage() {
                 </button>
               </div>
 
-              {/* Newly Created Key inline banner */}
+              
               {createdKey && (
                 <div
                   className="api-key-created"
@@ -360,7 +353,7 @@ export default function ApiKeysPage() {
                 </h4>
               </div>
 
-              {/* Key List */}
+              
               <div className="api-key-list" id="api-key-list" style={{ maxHeight: "none" }}>
                 {activeKeys.length === 0 ? (
                   <div className="api-key-list-empty" id="api-key-list-empty">
@@ -436,7 +429,7 @@ export default function ApiKeysPage() {
         </div>
       </main>
 
-      {/* Modal Dialog for newly created API Key */}
+      
       {isModalOpen && createdKey && (
         <div
           id="api-key-modal"

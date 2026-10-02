@@ -9,10 +9,7 @@ from backend.config import POSTGRES_URL
 
 logger = logging.getLogger(__name__)
 
-# ── Connection Pool ─────────────────────────────────────────────────
-# Lazily initialised; lives for the lifetime of the warm serverless
-# function instance.  SimpleConnectionPool is fine because Vercel
-# invocations are single-threaded.
+# Connection Pool
 
 _pool: psycopg2.pool.SimpleConnectionPool | None = None
 
@@ -48,7 +45,7 @@ def _borrow():
         pool.putconn(conn)
 
 
-# ── Schema bootstrap (runs at most once per process) ────────────────
+# Schema bootstrap (runs at most once per process)
 
 _db_initialized = False
 
@@ -114,7 +111,7 @@ def init_db():
         logger.error("Failed to initialize database: %s", e)
 
 
-# ── Transaction Operations ──────────────────────────────────────────
+# Transaction Operations
 
 def save_transaction(user_id: str, service_id: str, service_name: str, cost: float, status: str, tx_hash: str):
     with _borrow() as conn:
@@ -156,7 +153,7 @@ def get_transactions(user_id: str) -> list[dict]:
             ]
 
 
-# ── API Rate Limiting ───────────────────────────────────────────────
+# API Rate Limiting
 
 def check_rate_limit(key_hash: str, limit: int = 60, window_seconds: int = 60) -> bool:
     with _borrow() as conn:
@@ -186,7 +183,7 @@ def check_rate_limit(key_hash: str, limit: int = 60, window_seconds: int = 60) -
             return count <= limit
 
 
-# ── API Key Operations ──────────────────────────────────────────────
+# API Key Operations
 
 def save_api_key(key_hash: str, key_prefix: str, wallet_address: str, label: str = ""):
     with _borrow() as conn:
@@ -258,7 +255,7 @@ def update_api_key_last_used(key_hash: str):
         conn.commit()
 
 
-# ── Auth Nonce Operations ───────────────────────────────────────────
+# Auth Nonce Operations
 
 def save_nonce(wallet_address: str, nonce: str):
     # Lazily clean up expired nonces first

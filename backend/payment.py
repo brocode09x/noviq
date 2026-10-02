@@ -80,7 +80,7 @@ async def verify_authorization(auth_header: str, expected_amount_usdc: float) ->
 
 
 async def check_balance(user_id: str, required_usdc: float) -> None:
-    """Verify the user has sufficient USDC balance without initiating a transfer."""
+
     wallet_info = await get_or_create_wallet(user_id)
     if wallet_info.usdc_balance < required_usdc:
         raise ValueError(
