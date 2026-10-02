@@ -61,7 +61,7 @@ export function WalletPanel() {
 
 
           <div style={{ marginTop: "0.5rem", marginBottom: "0.5rem", display: "flex", flexDirection: "column", gap: "8px", alignItems: "center" }}>
-            <div style={{ display: "flex", width: "100%" }}>
+            <div style={{ display: "flex", width: "100%", gap: "8px" }}>
               <input
                 type="number"
                 value={approvalAmount}
@@ -74,9 +74,8 @@ export function WalletPanel() {
                   minWidth: "0",
                   boxSizing: "border-box",
                   padding: "6px 10px",
-                  borderRadius: "var(--radius-md) 0 0 var(--radius-md)",
+                  borderRadius: "var(--radius-md)",
                   border: "1px solid var(--border-light)",
-                  borderRight: "none",
                   background: "var(--bg-tertiary)",
                   color: "var(--text-primary)",
                   fontFamily: "var(--font-sans)",
@@ -86,10 +85,7 @@ export function WalletPanel() {
               />
               <button
                 className="btn btn-primary btn-sm"
-                style={{
-                  margin: 0,
-                  borderRadius: "0 var(--radius-md) var(--radius-md) 0",
-                }}
+                style={{ margin: 0 }}
                 onClick={() => approveUSDC(Number(approvalAmount) || 0)}
               >
                 Approve
@@ -100,7 +96,7 @@ export function WalletPanel() {
             </span>
             {wallet.allowance !== undefined && (
               <span style={{ fontSize: "0.8rem", color: "var(--success)", fontWeight: 500, marginTop: "4px" }}>
-                Current Approved: {wallet.allowance.toFixed(2)} USDC
+                Approval Remaining: {wallet.allowance.toFixed(2)} USDC
               </span>
             )}
           </div>

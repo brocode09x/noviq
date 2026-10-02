@@ -23,7 +23,7 @@ export function Navbar({ activePage }: { activePage?: string }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const faucetUrl = "https://www.circle.com/en/usdc";
+  const faucetUrl = "https://portal.arc.io/swap";
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
