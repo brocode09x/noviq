@@ -5,7 +5,6 @@ const BACKEND_ROUTES = [
   "/health",
   "/services",
   "/auth/:path*",
-  "/run-service",
   "/run",
   "/transactions/:path*",
   "/wallet",

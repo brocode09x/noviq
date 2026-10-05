@@ -199,7 +199,7 @@ console.log(data.result);`;
               <span style={{ fontSize: "0.65em", verticalAlign: "middle", opacity: 0.7, margin: "0 4px" }}>
                 &bull;
               </span>{" "}
-              NANOPAYMENTS
+              PAY PER REQUEST
             </div>
           </div>
 
@@ -665,7 +665,7 @@ console.log(data.result);`;
       <section id="history" className="section section-history">
         <div className="section-header reveal-on-scroll">
           <h2 className="section-title">Transaction History</h2>
-          <p className="section-subtitle">Your recent agent runs and payment authorizations.</p>
+          <p className="section-subtitle">Your recent agent runs and payments.</p>
         </div>
         <div className="history-table-wrapper glass-panel">
           <div className="history-table-inner">

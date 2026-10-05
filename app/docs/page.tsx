@@ -11,12 +11,11 @@ const DOCS_SECTIONS = [
   { id: "introduction", label: "Introduction" },
   { id: "quickstart", label: "Quickstart" },
   { id: "authentication", label: "Authentication" },
-  { id: "nanopayments", label: "Nanopayments" },
+  { id: "payments", label: "Payments" },
   { id: "services-registry", label: "Services Registry" },
   { id: "arc-network", label: "Arc Network" },
   { id: "rate-limits", label: "Rate Limits" },
   { id: "api-run", label: "POST /run" },
-  { id: "api-run-service", label: "POST /run-service" },
   { id: "api-services", label: "GET /services" },
   { id: "api-transactions", label: "GET /transactions/{id}" },
   { id: "api-wallet", label: "Wallet Endpoints" },
@@ -172,11 +171,11 @@ export default function DocsPage() {
               <ul className="docs-nav-links">
                 <li>
                   <a
-                    href="#nanopayments"
-                    className={`docs-nav-link ${activeSection === "nanopayments" ? "active" : ""}`}
+                    href="#payments"
+                    className={`docs-nav-link ${activeSection === "payments" ? "active" : ""}`}
                     onClick={closeSidebar}
                   >
-                    Nanopayments
+                    Payments
                   </a>
                 </li>
                 <li>
@@ -219,15 +218,6 @@ export default function DocsPage() {
                     onClick={closeSidebar}
                   >
                     POST /run
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#api-run-service"
-                    className={`docs-nav-link ${activeSection === "api-run-service" ? "active" : ""}`}
-                    onClick={closeSidebar}
-                  >
-                    POST /run-service
                   </a>
                 </li>
                 <li>
@@ -546,9 +536,9 @@ console.log(data.result);`}
               </div>
 
               
-              <h2 id="nanopayments">Nanopayments</h2>
+              <h2 id="payments">Payments</h2>
               <p>
-                Noviq&apos;s nanopayment infrastructure enables micro-transactions as small as{" "}
+                Noviq&apos;s payment system enables micro-transactions as small as{" "}
                 <strong>$0.005 USDC</strong> without gas fees borne by the end user. Payments are
                 settled on-chain via the <code>NoviqMarketplace</code> smart contract&apos;s{" "}
                 <code>payForService</code> function, called directly over the Arc Mainnet RPC.
@@ -799,85 +789,6 @@ console.log(data.result);`}
   "result": "96521.0",
   "price_usdc": 0.005,
   "tx_hash": "0x5f3a..."
-}`}
-                  </code>
-                </pre>
-              </div>
-
-              
-              <h2 id="api-run-service">POST /run-service</h2>
-              <p>
-                An alternative execution endpoint that supports the <strong>x402 payment
-                  protocol</strong> (EIP-3009 signed authorizations) in addition to standard API key
-                auth. This is intended for autonomous agents and AI-to-AI payment flows.
-              </p>
-              <p>
-                If no <code>X-Payment-Authorization</code> header is provided, the endpoint returns
-                a <code>402 Payment Required</code> challenge with payment details. Once an
-                EIP-3009 authorization is obtained and submitted, the service is executed.
-              </p>
-
-              <h3>Additional Headers</h3>
-              <div className="docs-table-wrapper">
-                <table className="docs-table">
-                  <thead>
-                    <tr>
-                      <th>Header</th>
-                      <th>Value</th>
-                      <th>Required</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><code>Authorization</code></td>
-                      <td><code>nvq_YOUR_API_KEY</code></td>
-                      <td>Yes</td>
-                    </tr>
-                    <tr>
-                      <td><code>X-Payment-Authorization</code></td>
-                      <td>JSON-encoded EIP-3009 authorization payload</td>
-                      <td>No (triggers 402 challenge if absent)</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <h3>402 Challenge Response</h3>
-              <div className="docs-code-block-wrapper">
-                <div className="docs-code-block-header">
-                  <span className="docs-code-lang">json</span>
-                  <button
-                    className="docs-btn-copy"
-                    onClick={() =>
-                      copyCode(
-                        `{
-  "scheme": "x402",
-  "price_usdc": 0.05,
-  "price_usdc_atomic": 50000,
-  "token_address": "0x3600000000000000000000000000000000000000",
-  "seller_address": "0x...",
-  "chain_id": 5042,
-  "agent_id": "nemotron-3-super",
-  "description": "Run nemotron-3 on Noviq"
-}`,
-                        6
-                      )
-                    }
-                  >
-                    {copiedIndex === 6 ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-                <pre className="docs-code-block">
-                  <code>
-                    {`{
-  "scheme": "x402",
-  "price_usdc": 0.05,
-  "price_usdc_atomic": 50000,
-  "token_address": "0x3600000000000000000000000000000000000000",
-  "seller_address": "0x...",
-  "chain_id": 5042,
-  "agent_id": "nemotron-3-super",
-  "description": "Run nemotron-3 on Noviq"
 }`}
                   </code>
                 </pre>
@@ -1323,7 +1234,7 @@ console.log(data.result);`}
                     <tr>
                       <td><code>402</code></td>
                       <td>Payment Required</td>
-                      <td>Insufficient USDC balance, or missing x402 payment header.</td>
+                      <td>Insufficient USDC balance or failed on-chain payment.</td>
                     </tr>
                     <tr>
                       <td><code>403</code></td>

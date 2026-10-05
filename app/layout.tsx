@@ -26,7 +26,7 @@ const playfairDisplay = Playfair_Display({
 export const metadata: Metadata = {
   title: "Noviq",
   description:
-    "Noviq — Pay-per-request AI services powered by Circle Nanopayments on Arc. No subscriptions, no gas, just sign and run.",
+    "Noviq — Pay-per-request AI services powered by on-chain USDC payments on Arc. No subscriptions, no gas, just sign and run.",
   icons: {
     icon: [
       { url: "/assets/Noviq.png", type: "image/png" },

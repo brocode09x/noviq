@@ -177,7 +177,13 @@ def check_rate_limit(key_hash: str, limit: int = 60, window_seconds: int = 60) -
                 """,
                 (key_hash,)
             )
-            count = cur.fetchone()[0]
+            row = cur.fetchone()
+            if row is None:
+                # RETURNING should always produce a row, but fail closed if the
+                # database/driver does not return one.
+                conn.rollback()
+                return False
+            count = row[0]
             conn.commit()
             
             return count <= limit

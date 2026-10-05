@@ -12,26 +12,11 @@ class ServiceInfo(BaseModel):
     price_usdc: float = Field(..., description="Cost per request in USDC")
 
 
-# /run and /run-service
+# /run
 class RunServiceRequest(BaseModel):
 
     service_id: str = Field(..., description="ID of the service to run")
     input_data: str = Field(..., min_length=1, description="User-supplied data")
-
-
-# 402 Payment Required
-class PaymentChallenge(BaseModel):
-
-    scheme: Literal["x402"] = "x402"
-    price_usdc: float
-    price_usdc_atomic: int = Field(
-        ..., description="Price expressed in USDC's smallest unit (6 decimals)"
-    )
-    token_address: str = Field(..., description="USDC contract address on Arc mainnet")
-    seller_address: str = Field(..., description="Marketplace wallet that receives the payment")
-    chain_id: int
-    agent_id: str
-    description: str
 
 
 # Wallets

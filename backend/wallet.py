@@ -1,7 +1,7 @@
 from __future__ import annotations
 import logging
 import httpx
-from eth_utils import to_checksum_address
+from eth_utils.address import to_checksum_address
 
 from backend.config import (
     ARC_MAINNET_RPC_URL,

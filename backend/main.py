@@ -11,7 +11,7 @@ if _PROJECT_ROOT not in sys.path:
     sys.path.insert(0, _PROJECT_ROOT)
 
 import httpx
-from fastapi import FastAPI, Depends, Header, HTTPException, Request
+from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.types import ASGIApp, Scope, Receive, Send
@@ -61,7 +61,7 @@ database.init_db()
 app = FastAPI(
     title="Noviq — AI Services Marketplace",
     description=(
-        "Pay-per-request AI services powered by Circle Nanopayments on Arc. "
+        "Pay-per-request AI services powered by on-chain USDC payments on Arc. "
         "No subscriptions. No gas. Just sign and run."
     ),
     version="0.4.0",
@@ -246,39 +246,6 @@ async def run_simple(
     return await _execute_service(body, wallet_address)
 
 
-@app.post("/run-service", tags=["Services"], response_model=None)
-async def run_service(
-    body: RunServiceRequest,
-    wallet_address: str = Depends(validate_api_key),
-    x_payment_authorization: str | None = Header(default=None),
-):
-    wallet_address = to_checksum_address(wallet_address)
-
-    if body.service_id not in service_module.SERVICE_REGISTRY:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Unknown service_id '{body.service_id}'. "
-                   f"Valid options: {list(service_module.SERVICE_REGISTRY)}",
-        )
-
-    service_def = service_module.SERVICE_REGISTRY[body.service_id]
-
-    # Handle x402 payment authorization challenge/verification
-    payment_result = await handle_payment_flow(
-        x_payment_authorization=x_payment_authorization,
-        item_id=body.service_id,
-        price_usdc=service_def.price_usdc,
-        description=f"Run {service_def.name} on Noviq",
-        user_id=wallet_address,
-    )
-
-    if isinstance(payment_result, JSONResponse):
-        return payment_result
-
-    # If x402 verification passed, proceed with shared execution logic
-    return await _execute_service(body, wallet_address)
-
-
 @app.get("/transactions/{user_id}", tags=["Services"])
 async def get_user_transactions(
     user_id: str,
@@ -396,65 +363,6 @@ async def revoke_api_key_endpoint(
         raise HTTPException(status_code=404, detail="API key not found or already revoked.")
     return {"status": "revoked", "key_prefix": key_prefix}
 
-
-# Payment helper
-
-async def handle_payment_flow(
-    x_payment_authorization: str | None,
-    item_id: str,
-    price_usdc: float,
-    description: str,
-    user_id: str | None,
-) -> str | JSONResponse:
-    # Step 1: No payment header → issue 402 challenge
-    if not x_payment_authorization:
-        challenge = payment.build_payment_challenge(
-            agent_id=item_id,
-            price_usdc=price_usdc,
-            description=description,
-        )
-        return JSONResponse(
-            status_code=402,
-            content=challenge.model_dump(),
-            headers={
-                "X-Payment-Scheme": "x402",
-                "X-Payment-Price-USDC": str(price_usdc),
-            },
-        )
-
-    # Step 2: Auth header present → verify via Circle Nanopayments
-    logger.info(
-        "Received payment authorization for '%s' (price: $%s USDC)",
-        item_id,
-        price_usdc,
-    )
-
-    is_valid, tx_hash = await payment.verify_authorization(
-        auth_header=x_payment_authorization,
-        expected_amount_usdc=price_usdc,
-    )
-
-    if not is_valid:
-        raise HTTPException(
-            status_code=402,
-            detail=f"Payment authorization invalid or insufficient: {tx_hash}",
-        )
-        
-    # Execute the actual on-chain transfer
-    if not user_id:
-        raise HTTPException(
-            status_code=400, 
-            detail="Wallet not connected. Cannot execute payment without user_id."
-        )
-        
-    try:
-        payment_tx_id = await payment.execute_payment(user_id, price_usdc)
-        return payment_tx_id
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=402,
-            detail=str(exc),
-        )
 
 if __name__ == "__main__":
     cwd = Path.cwd()

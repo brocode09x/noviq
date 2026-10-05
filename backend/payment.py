@@ -1,9 +1,6 @@
 from __future__ import annotations
-import asyncio
-import json
 import logging
 import uuid
-import httpx
 from eth_account import Account
 from web3 import AsyncWeb3, AsyncHTTPProvider, Web3
 
@@ -13,11 +10,8 @@ from backend.config import (
     BACKEND_PRIVATE_KEY,
     MARKETPLACE_CONTRACT_ADDRESS,
     SELLER_WALLET_ADDRESS,
-    USDC_ADDRESS,
 )
-from backend.models import PaymentChallenge
 from backend.wallet import get_or_create_wallet
-from backend import database
 
 logger = logging.getLogger(__name__)
 
@@ -43,40 +37,6 @@ MARKETPLACE_ABI = [
 
 def _usdc_to_atomic(amount_usdc: float) -> int:
     return int(round(amount_usdc * 10**_USDC_DECIMALS))
-
-
-# Build the 402 challenge payload
-def build_payment_challenge(agent_id: str, price_usdc: float, description: str) -> PaymentChallenge:
-    return PaymentChallenge(
-        scheme="x402",
-        price_usdc=price_usdc,
-        price_usdc_atomic=_usdc_to_atomic(price_usdc),
-        token_address=USDC_ADDRESS,
-        seller_address=SELLER_WALLET_ADDRESS or "0x0000000000000000000000000000000000000000",
-        chain_id=ARC_CHAIN_ID,
-        agent_id=agent_id,
-        description=description,
-    )
-
-
-# Verify an EIP-3009 signed authorization
-async def verify_authorization(auth_header: str, expected_amount_usdc: float) -> tuple[bool, str]:
-    try:
-        data = json.loads(auth_header)
-        auth_data = data.get("payload", {}).get("authorization", {})
-        auth_value = int(auth_data.get("value", "0"))
-        
-        expected_atomic = _usdc_to_atomic(expected_amount_usdc)
-        
-        if auth_value >= expected_atomic:
-            payment_ref = f"demo-ref-{uuid.uuid4().hex[:8]}"
-            return True, payment_ref
-            
-        return False, f"Insufficient payment: got {auth_value}, expected {expected_atomic}"
-        
-    except (json.JSONDecodeError, ValueError) as exc:
-        logger.error("Failed to parse authorization header: %s", exc)
-        return False, "Invalid authorization format"
 
 
 async def check_balance(user_id: str, required_usdc: float) -> None:
@@ -106,7 +66,8 @@ async def execute_payment(user_id: str, expected_amount_usdc: float) -> str:
     w3 = AsyncWeb3(AsyncHTTPProvider(ARC_MAINNET_RPC_URL))
     account = Account.from_key(BACKEND_PRIVATE_KEY)
     
-    contract = w3.eth.contract(address=MARKETPLACE_CONTRACT_ADDRESS, abi=MARKETPLACE_ABI)
+    contract_address = Web3.to_checksum_address(MARKETPLACE_CONTRACT_ADDRESS)
+    contract = w3.eth.contract(address=contract_address, abi=MARKETPLACE_ABI)
     
     atomic_amount = _usdc_to_atomic(expected_amount_usdc)
     ref_id = f"ref-{uuid.uuid4().hex[:8]}"
@@ -134,7 +95,7 @@ async def execute_payment(user_id: str, expected_amount_usdc: float) -> str:
     
     # Wait for receipt
     receipt = await w3.eth.wait_for_transaction_receipt(tx_hash, timeout=60)
-    if receipt.status != 1:
+    if receipt["status"] != 1:
         raise ValueError(f"Transaction failed on chain. Hash: {tx_hash.hex()}")
         
     return tx_hash.hex()

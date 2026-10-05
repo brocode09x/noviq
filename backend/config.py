@@ -21,10 +21,10 @@ USDC_ADDRESS: str = os.getenv("USDC_ADDRESS", "0x3600000000000000000000000000000
 GATEWAY_API_BASE: str = "https://gateway-api.circle.com/v1"
 GATEWAY_WALLET_ADDRESS: str = "0x0077777d7EBA4688BDeF3E311b846F25870A19B9"
 
-# Chain ID for Arc mainnet — needed for EIP-3009 domain separator
+# Chain ID for Arc mainnet transactions
 ARC_CHAIN_ID: int = int(os.getenv("ARC_CHAIN_ID", "5042"))
 
-# Seller wallet (receives nanopayment authorizations)
+# Seller wallet (receives service payments)
 SELLER_WALLET_ADDRESS: str = os.getenv("SELLER_WALLET_ADDRESS", "")
 SELLER_WALLET_ID: str = os.getenv("SELLER_WALLET_ID", "")
 
